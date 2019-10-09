@@ -1,0 +1,21 @@
+{
+  "name": "nrfdfu-node",
+  "version": "1.0.0",
+  "description": "nRF Device Firmware Update for node.js on linux.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node-gyp rebuild",
+    "upload": "node run.js"
+  },
+  "author": "Daniel Sandoval <daniel@loopkey.com.br>",
+  "license": "GPL-3.0-only",
+  "repository": "loopce/nrfdfu-node",
+  "gypfile": true,
+  "devDependencies": {
+    "node-gyp": "^6.0.0"
+  },
+  "dependencies": {
+    "node-addon-api": "^1.7.1"
+  }
+}
