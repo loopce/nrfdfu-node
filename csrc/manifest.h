@@ -6,4 +6,7 @@ struct manifest
   char hasSDBootloader;
   const char *sdBootloaderDatFileName;
   const char *sdBootloaderBinFileName;
+  char hasInternal;
+  const char *internalDatFileName;
+  const char *internalBinFileName;
 };

@@ -13,8 +13,14 @@ static void
 dump_manifest (struct manifest *m)
 {
   printf ("Manifest:\n");
+  if (m->hasInternal){
+    printf("  == Internal ==\n");
+    printf("  dat_file : %s\n", m->internalDatFileName);
+    printf("  bin_file : %s\n", m->internalBinFileName);
+    printf("\n");
+  }
   if (m->hasSDBootloader){
-    printf("  == SD+Bootloader ==\n");
+    printf("  == Bootloader ==\n");
     printf("  dat_file : %s\n", m->sdBootloaderDatFileName);
     printf("  bin_file : %s\n", m->sdBootloaderBinFileName);
     printf("\n");
@@ -43,8 +49,6 @@ parse_manifest (const char *str)
   json = json_tokener_parse_verbose (str, &jerr);
 
   manifest = _json_object_object_get (json, "manifest");
-
-
   
   json_object_object_foreach (manifest, key, val)
   {
@@ -53,16 +57,21 @@ parse_manifest (const char *str)
       m->applicationBinFileName = json_object_get_string (_json_object_object_get (val, "bin_file"));
       m->applicationDatFileName = json_object_get_string (_json_object_object_get (val, "dat_file"));
     }
-    else if (strcmp(key,"softdevice_bootloader")==0){
+    else if (strcmp(key,"bootloader")==0){
       m->hasSDBootloader = 1;
       m->sdBootloaderBinFileName = json_object_get_string (_json_object_object_get (val, "bin_file"));
       m->sdBootloaderDatFileName = json_object_get_string (_json_object_object_get (val, "dat_file"));
+    }
+    else if (strcmp(key,"internal")==0){
+      m->hasInternal = 1;
+      m->internalBinFileName = json_object_get_string (_json_object_object_get (val, "bin_file"));
+      m->internalDatFileName = json_object_get_string (_json_object_object_get (val, "dat_file"));
     }
     else {
       fprintf (stderr, "Unhandled manifest content '");
       fprintf (stderr, key);
       fprintf (stderr, "' this tool needs to be updated to support this\n");
-      exit (EXIT_FAILURE);
+      return NULL;
     }
   }
 
@@ -71,9 +80,10 @@ parse_manifest (const char *str)
 
 
   if ((m->hasApplication  && ((!m->applicationDatFileName)  || (!m->applicationBinFileName))) ||
-      (m->hasSDBootloader && ((!m->sdBootloaderDatFileName) || (!m->sdBootloaderBinFileName)))) {
+      (m->hasSDBootloader && ((!m->sdBootloaderDatFileName) || (!m->sdBootloaderBinFileName))) ||
+      (m->hasInternal && ((!m->internalDatFileName) || (!m->internalBinFileName)))) {
     fprintf (stderr, "Failed to process manifest\n");
-    exit (EXIT_FAILURE);
+    return NULL;
   }
 
   return m;

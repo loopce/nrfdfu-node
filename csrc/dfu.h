@@ -1,5 +1,6 @@
 
 typedef enum {
+  BLE_DFU_INVALID_MANIFEST                       = -1,
   BLE_DFU_NO_OPERATION                           = -1,
   BLE_DFU_RESP_VAL_INVALID_CODE                  = 0x00,
   BLE_DFU_RESP_VAL_SUCCESS                       = 0x01,
