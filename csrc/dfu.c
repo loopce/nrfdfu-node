@@ -223,11 +223,12 @@ int dfuSendPackage(BLE * ble, uint8_t *packageData, size_t packageDataLength, Bl
       currentBlockIndex += chunkLength;
     }
     
-    
     //Request checksum
     ble_wait_setup(ble, OP_CODE_CALCULATE_CHECKSUM);
     buffer[0]         = OP_CODE_CALCULATE_CHECKSUM;
-    ble_send_cp(ble, buffer, 1);
+    if (ble_send_cp(ble, buffer, 1) != EXIT_SUCCESS){
+      return BLE_DFU_RESP_VAL_OPERATION_FAILED;
+    }
     returnCode = ble_wait_run(ble);
     if (returnCode != BLE_DFU_RESP_VAL_SUCCESS){
       dfuPrintHumanReadableError(ble);
@@ -262,7 +263,9 @@ int dfuSendPackage(BLE * ble, uint8_t *packageData, size_t packageDataLength, Bl
 	  //Request command execution to acknowledge the last data
 	  ble_wait_setup(ble, OP_CODE_EXECUTE);
 	  buffer[0]         = OP_CODE_EXECUTE;
-	  ble_send_cp(ble, buffer, 1);
+    if (ble_send_cp(ble, buffer, 1) != EXIT_SUCCESS) {
+      return BLE_DFU_RESP_VAL_OPERATION_FAILED;
+    }
 	  returnCode = ble_wait_run(ble);
 	  if (returnCode != BLE_DFU_RESP_VAL_SUCCESS){
 	    dfuPrintHumanReadableError(ble);
@@ -273,7 +276,9 @@ int dfuSendPackage(BLE * ble, uint8_t *packageData, size_t packageDataLength, Bl
 	  //Request command execution to acknowledge the send data
 	  ble_wait_setup(ble, OP_CODE_EXECUTE);
 	  buffer[0]         = OP_CODE_EXECUTE;
-	  ble_send_cp(ble, buffer, 1);
+    if (ble_send_cp(ble, buffer, 1) != EXIT_SUCCESS){
+      return BLE_DFU_RESP_VAL_OPERATION_FAILED;
+    }
 	  returnCode = ble_wait_run(ble);
 	  if (returnCode != BLE_DFU_RESP_VAL_SUCCESS){
 	    dfuPrintHumanReadableError(ble);
@@ -288,7 +293,9 @@ int dfuSendPackage(BLE * ble, uint8_t *packageData, size_t packageDataLength, Bl
 	  buffer[3]         = (transferSize>> 8) & 0xFF;
 	  buffer[4]         = (transferSize>>16) & 0xFF;
 	  buffer[5]         = (transferSize>>24) & 0xFF;  
-	  ble_send_cp(ble, buffer, 6);
+    if (ble_send_cp(ble, buffer, 6) != EXIT_SUCCESS){
+      return BLE_DFU_RESP_VAL_OPERATION_FAILED;
+    }
 	  returnCode = ble_wait_run(ble);
 	  if (returnCode != BLE_DFU_RESP_VAL_SUCCESS){
 	    dfuPrintHumanReadableError(ble);
@@ -308,7 +315,9 @@ int dfuSendPackage(BLE * ble, uint8_t *packageData, size_t packageDataLength, Bl
 	buffer[3]         = (transferSize>> 8) & 0xFF;
 	buffer[4]         = (transferSize>>16) & 0xFF;
 	buffer[5]         = (transferSize>>24) & 0xFF;  
-	ble_send_cp(ble, buffer, 6);
+  if (ble_send_cp(ble, buffer, 6) != EXIT_SUCCESS){
+      return BLE_DFU_RESP_VAL_OPERATION_FAILED;
+    }
 	returnCode = ble_wait_run(ble);
 	if (returnCode != BLE_DFU_RESP_VAL_SUCCESS){
 	  dfuPrintHumanReadableError(ble);
